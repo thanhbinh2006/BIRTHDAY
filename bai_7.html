@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #mycanvas{
+            position:fixed;
+            top:0;left:0;
+        }
+    </style>
+</head>
+<body>
+  <canvas id="mycanvas"></canvas>
+</body>
+<script>
+   var mycanvas=document.getElementById("mycanvas");
+   var ctx=mycanvas.getContext("2d");
+   mycanvas.height=window.innerHeight;
+   mycanvas.width=window.innerWidth;
+   const colors=["red","yellow","pink","orange","blue"];
+   function randomcolor(){
+    return colors[Math.floor(Math.random()*colors.length)];  
+   }
+   function Particle(x,y,radious,color,valocity){
+    this.x=x;
+    this.y=y;
+    this.radious=radious;
+    this.color=color;
+    this.valocity=valocity;
+    this.ttl=200;
+    this.draw=()=>{
+      ctx.beginPath();
+      ctx.arc(this.x,this.y,this.radious,0,Math.PI*2,false);
+      ctx.fillStyle=this.color;
+      ctx.fill();
+      ctx.closePath();  
+    }  
+    this.update=()=>{
+       this.draw();
+       this.x+=this.valocity.x;
+       this.y+=this.valocity.y;
+       this.ttl--;
+    }
+   }
+   const mouse={
+    x:0,y:0
+   }
+   let particles;particles=[];
+   /*function inp(){
+    
+    for (let i = 0; i <=20; i++) {
+    const radian=(Math.PI*2)/20;
+    const x=mycanvas.width/2;
+    const y=mycanvas.height/2;
+    const valocity={
+      x:Math.cos(radian*i),
+      y:Math.sin(radian*i)
+    }
+        particles.push(new Particle(
+             x,y,
+            5,randomcolor()
+            ,valocity));
+    }
+   }*/
+   function generation(){
+    setTimeout(generation,100);
+    for (let i = 0; i <=30; i++) {
+    const radian=(Math.PI*2)/30;
+    const x=mouse.x;
+    const y=mouse.y;
+    const valocity={
+      x:Math.cos(radian*i),
+      y:Math.sin(radian*i)
+    }
+        particles.push(new Particle(
+             x,y,
+            5,randomcolor()
+            ,valocity));
+    }
+   }
+   ctx.fillStyle="rgba(0,0,0,0.05)";
+   ctx.fillRect(0,0,mycanvas.width,mycanvas.height);
+   function animation(){
+    requestAnimationFrame(animation);
+    ctx.fillStyle="rgba(0,0,0,0.05)";
+    ctx.fillRect(0,0,mycanvas.width,mycanvas.height);
+    particles.forEach((item,i) => {
+     if (item.ttl==0){particles.splice(i,1)} else{ item.update()}});
+   }
+  
+   window.addEventListener("mousemove",e=>{
+    mouse.x=e.x;
+    mouse.y=e.y;
+   })
+   generation();
+   animation();
+</script>
+</html>
